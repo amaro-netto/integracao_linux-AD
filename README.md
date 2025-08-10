@@ -8,6 +8,14 @@ Você precisa apenas:
 **- Ter o IP ou nome do servidor AD**
 
 **- Ter um usuário administrador do domínio para conectar**
+> [!TIP]
+> Existe um script que automatia tudo: Ubunto_Debian_ad-integrar.sh
+
+> [!IMPORTANT]
+> Antes de rodar você precisa saber:
+> - O nome do domínio (ex: empresa.local)
+> - O usuário administrador do AD (ex: Administrador)
+> - O IP do servidor AD (para sincronizar o horário)
 
 ##
 
