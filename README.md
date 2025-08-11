@@ -1,15 +1,9 @@
-# 🎯 OBJETIVO
-Fazer com que um computador Linux (Debian/Ubuntu) aceite login de usuários do Active Directory, como se fossem usuários locais.
-
-Você precisa apenas:
-
-**- Ter o nome do domínio AD (ex: empresa.local)**
-
-**- Ter o IP ou nome do servidor AD**
+# OBJETIVO
+Comunicação de um equipamento Linux (Debian/Ubuntu) aceite login de usuários do AD (Active Directory), como se fossem usuários locais.
 
 **- Ter um usuário administrador do domínio para conectar**
 > [!TIP]
-> Existe um script que automatia tudo: Ubunto_Debian_ad-integrar.sh
+> Existe um script que automatiza tudo: Ubunto_Debian_ad-integrar.sh
 
 > [!IMPORTANT]
 > Antes de rodar você precisa saber:
@@ -44,47 +38,48 @@ sudo nano /etc/chrony/chrony.conf
 
 Adicione seu servidor AD (exemplo com IP 192.168.1.10):
 
-nginx
-Copiar
-Editar
+```nginx
 server 192.168.1.10 iburst
+```
+
 Salve e reinicie:
 
-bash
-Copiar
-Editar
+```bash
 sudo systemctl restart chronyd
+```
+
 🧩 ETAPA 2 – Instalar os pacotes necessários
-bash
-Copiar
-Editar
+
+```bash
 sudo apt update
 sudo apt install realmd sssd sssd-tools libnss-sss libpam-sss adcli oddjob oddjob-mkhomedir samba-common-bin krb5-user packagekit -y
+```
+
 Durante a instalação, pode aparecer a pergunta sobre o REALM do Kerberos. Coloque seu domínio em MAIÚSCULAS.
+
 Exemplo:
 
-pgsql
-Copiar
-Editar
+```pgsql
 EXEMPLO.LOCAL
+```
+
 🧩 ETAPA 3 – Descobrir o domínio Active Directory
 Use o comando abaixo com o nome do seu domínio (tudo em maiúsculas ou minúsculas, tanto faz):
 
-bash
-Copiar
-Editar
+```bash
 realm discover exemplo.local
+```
+
 Você deve ver uma saída parecida com:
 
-yaml
-Copiar
-Editar
+```yaml
 exemplo.local
   type: kerberos
   realm-name: EXEMPLO.LOCAL
   domain-name: exemplo.local
   configured: no
-  ...
+```
+
 🧩 ETAPA 4 – Entrar no domínio
 Substitua abaixo:
 
@@ -92,37 +87,35 @@ Administrador: usuário com permissão no domínio
 
 exemplo.local: seu domínio
 
-bash
-Copiar
-Editar
+```bash
 sudo realm join --user=Administrador exemplo.local
+```
 Vai pedir a senha do usuário.
 
 Se tudo der certo, você verá nenhum erro e o Linux já estará autenticado.
 
 🧩 ETAPA 5 – Testar se o domínio está funcionando
-bash
-Copiar
-Editar
+
+```bash
 realm list
+```
+
 Você verá um bloco com dados do domínio conectado.
 
 Agora teste buscar um usuário:
 
-bash
-Copiar
-Editar
+```bash
 id usuario@exemplo.local
+```
 Substitua usuario por um usuário real do AD.
 Se aparecer um monte de informações como UID e grupos: ✅ Sucesso!
 
 🧩 ETAPA 6 – Permitir apenas certos usuários (opcional)
 Por padrão, qualquer usuário do AD pode logar. Para restringir:
 
-bash
-Copiar
-Editar
+```bash
 sudo realm permit --groups "TI"
+```
 Apenas usuários do grupo TI (no AD) poderão logar no Linux.
 
 🧩 ETAPA 7 – Criar pastas home automaticamente
@@ -130,10 +123,10 @@ Sem isso, o usuário do AD loga, mas não tem uma pasta pessoal.
 
 Ative com:
 
-bash
-Copiar
-Editar
+```bash
 sudo pam-auth-update --enable mkhomedir
+```
+
 🧩 ETAPA 8 – Melhorar nomes dos usuários
 Por padrão, você precisa logar como:
 
